@@ -2,7 +2,7 @@ import produce from "immer"
 
 export default function reservation(state = [], action) {
     switch(action.type) {
-        case 'ADD_RESERVATION':
+        case 'ADD_RESERVATION_SUCCESS':
             // return [ ...state, {
             //     ...action.trip,
             //     amount: 1, // passa a quantidade
@@ -31,6 +31,23 @@ export default function reservation(state = [], action) {
                 }
 
             })
+        case 'UPDATE_RESERVATION': {
+
+            // se for menor ou igual a 0, deixa como está
+            if (action.amount <= 0) {
+                return state
+            }
+
+            return produce(state, draft => {
+                // precisamos achar primeiro o index no array
+                const tripIndex = draft.findIndex(trip => trip.id === action.id)
+
+                if (tripIndex >= 0) {
+                    // localiza ele e substitui o amount pelo que estamos enviando
+                    draft[tripIndex].amount = Number(action.amount)
+                }
+            })
+        }
         default:
             return []
     }
